@@ -1,9 +1,30 @@
 # babblefish
 
-### Chop up file into time segments:
+## Getting data
 
-    $ ffmpeg -i file.wav -f segment -segment_time 30 -c copy parts/output%09d.wav
+Record on rpi with `arecord`, rsync it to `raw/` directory here.
 
-### Amplify audio files:
+## Batchify
 
-    $ sox infile.wav outfile.wav vol 3 dB
+Find the valid recordings and use `sox` to batch up
+
+## Cleaning up data
+
+Run `./amplify-raw.sh`
+
+## Partitioning
+
+Run `./partition-edited.sh` to cut up training set.
+
+## Learning
+
+Trying to run the training app directly pointed at this app.
+
+Getting:
+
+```
+InvalidArgumentError (see above for traceback): Data too short when trying to read value
+         [[Node: DecodeWav = DecodeWav[desired_channels=1, desired_samples=192000, _device="/job:localhost/replica:0/task:0/device:CPU:0"](ReadFile)]]
+```
+
+Seems like the WAV file partitions might be too short? Need exactly `SAMPLE_RATE*DURATION_MS` samples in WAV files!
