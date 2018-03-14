@@ -40,3 +40,9 @@ python app/train.py --data_url= --data_dir=/Users/andrewhao/workspace/babblefish
 ```
 python app/freeze.py --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-1700 --output_file=./graph.pb --clip_duration_ms=5000 --sample_rate=48000 --how_many_training_steps=1400,300 --wanted_words=silence,crying --data_dir=/Users/andrewhao/workspace/babblefish/data
 ```
+
+### Label
+
+```
+python app/label_wav.py --graph=./graph.pb --labels=./conv_labels.txt --wav=data/crying/crying00021.wav
+```
