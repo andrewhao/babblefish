@@ -1,5 +1,16 @@
 # babblefish
 
+## File structure
+
+```
+app/       - TF training scripts
+crying/    - raw crying sample WAVs from source device
+silence/   - raw silence sample WAVs from source device
+data/
+  crying/  - normalized WAVs for crying label
+  silence/  - normalized WAVs for silence label
+```
+
 ## Getting data
 
 Record on rpi with `arecord`, rsync it to `raw/` directory here.
@@ -10,11 +21,12 @@ Find the valid recordings and use `sox` to batch up
 
 ## Cleaning up data
 
-Run `./amplify-raw.sh`
+The `process-raw-labeled-wav.sh` script will:
 
-## Partitioning
-
-Run `./partition-edited.sh` to cut up training set.
+1. Take raw samples in `crying/` and `silence/` folders
+1. Batch them up and splice them evenly into 5-second segments
+1. Amplify 45dB, downsample to 22050
+1. Store in `data/<LABEL>` directory.
 
 ## Learning
 
