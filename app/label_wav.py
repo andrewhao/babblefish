@@ -72,7 +72,7 @@ def run_graph(wav_data, labels, input_layer_name, output_layer_name,
     for node_id in top_k:
       human_string = labels[node_id]
       score = predictions[node_id]
-      print('%s (score = %.5f)' % (human_string, score))
+      print('%s,%.5f' % (human_string, score))
 
     return 0
 
