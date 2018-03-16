@@ -5,6 +5,7 @@ from __future__ import print_function
 import argparse
 import sys
 import requests
+import re
 
 import tensorflow as tf
 
@@ -44,7 +45,8 @@ def run_graph(wav, wav_data, labels, input_layer_name, output_layer_name,
     guessed_node_id = top_k[0]
     human_string = labels[guessed_node_id]
     score = predictions[guessed_node_id]
-    upload_to_server(human_string, score, wav)
+    datetime = re.sub(".wav", "", wav.split('/')[-1])
+    upload_to_server(human_string, score, datetime)
 
     for node_id in top_k:
       human_string = labels[node_id]
