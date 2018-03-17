@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
+!/usr/bin/env bash
 
 set -euxo pipefail
 
-python app/label_wav_and_upload_to_server.py --graph=./graph.pb --labels=./conv_labels.txt --wav="$1"
+python $(dirname $0)/app/label_wav_and_upload_to_server.py --graph=$(dirname $0)/graph.pb --labels=$(dirname $0)/conv_labels.txt --wav="$1"
