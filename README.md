@@ -9,6 +9,7 @@ silence/   - raw silence sample WAVs from source device
 data/
   crying/  - normalized WAVs for crying label
   silence/  - normalized WAVs for silence label
+  room_empty/  - normalized WAVs for room_empty label
 ```
 
 ## Getting data
