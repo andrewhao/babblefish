@@ -6,6 +6,7 @@ import argparse
 import sys
 import requests
 import re
+import os
 
 import tensorflow as tf
 
@@ -61,7 +62,7 @@ def upload_to_server(human_string, score, received_at):
           'human_string': human_string,
           'score': score,
           'received_at': received_at,
-          'device_id':'rpi2'}
+          'device_id': os.environ['HOSTNAME']}
   response = requests.post('https://thermonoto.herokuapp.com/cry_detection_updates', data=data)
   print('Posting with', data)
   print(response)
