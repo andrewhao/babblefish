@@ -17,9 +17,9 @@ sox crying/**/*.wav tmp/batch-crying.wav
 sox silence/**/*.wav tmp/batch-silence.wav
 sox room_empty/**/*.wav tmp/batch-room_empty.wav
 
-ffmpeg -i tmp/batch-crying.wav -f segment -segment_time 5.1 -c copy tmp/crying%05d.wav
-ffmpeg -i tmp/batch-silence.wav -f segment -segment_time 5.1 -c copy tmp/silence%05d.wav
-ffmpeg -i tmp/batch-room_empty.wav -f segment -segment_time 5.1 -c copy tmp/room_empty%05d.wav
+ffmpeg -i tmp/batch-crying.wav -f segment -segment_time 10.1 -c copy tmp/crying%05d.wav
+ffmpeg -i tmp/batch-silence.wav -f segment -segment_time 10.1 -c copy tmp/silence%05d.wav
+ffmpeg -i tmp/batch-room_empty.wav -f segment -segment_time 10.1 -c copy tmp/room_empty%05d.wav
 
 rm tmp/batch-*.wav
 
@@ -28,7 +28,7 @@ for f in $FILES
 do
   echo "Processing $f..."
   b=$(basename $f)
-  sox $f data/crying/$b trim 0 5 vol 45 dB rate 22050
+  sox $f data/crying/$b trim 0 10 rate 22050
 done
 rm data/crying/$(ls -t data/crying | head -n1)
 
@@ -37,7 +37,7 @@ for f in $FILES
 do
   echo "Processing $f..."
   b=$(basename $f)
-  sox $f data/silence/$b trim 0 5 vol 45 dB rate 22050
+  sox $f data/silence/$b trim 0 10 rate 22050
 done
 rm data/silence/$(ls -t data/silence | head -n1)
 
@@ -46,6 +46,6 @@ for f in $FILES
 do
   echo "Processing $f..."
   b=$(basename $f)
-  sox $f data/room_empty/$b trim 0 5 vol 45 dB rate 22050
+  sox $f data/room_empty/$b trim 0 10 rate 22050
 done
 rm data/room_empty/$(ls -t data/room_empty | head -n1)

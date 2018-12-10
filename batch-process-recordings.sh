@@ -11,7 +11,7 @@ for f in $FILES
 do
   echo "Processing $f..."
   b=$(basename "$f")
-  sox "$f" "$TRIMMED_OUTPUT_PATH/$b" trim 0 5 vol 45 dB rate 22050
+  sox "$f" "$TRIMMED_OUTPUT_PATH/$b" trim 0 10 rate 22050
   $(dirname $0)/label-wav.sh "$TRIMMED_OUTPUT_PATH/$b"
   # mv "$f" "$ARCHIVE_PATH/$b"
   rm "$f"
