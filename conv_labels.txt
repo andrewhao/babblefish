@@ -1,5 +1,5 @@
 _silence_
 _unknown_
-silence
+white_noise
 room_empty
 crying

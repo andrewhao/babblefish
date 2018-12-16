@@ -5,10 +5,10 @@
 ```
 app/       - TF training scripts
 crying/    - raw crying sample WAVs from source device
-silence/   - raw silence sample WAVs from source device
+white_noise/   - raw white_noise sample WAVs from source device
 data/
   crying/  - normalized WAVs for crying label
-  silence/  - normalized WAVs for silence label
+  white_noise/  - normalized WAVs for white_noise label
   room_empty/  - normalized WAVs for room_empty label
 ```
 
@@ -24,7 +24,7 @@ Find the valid recordings and use `sox` to batch up
 
 The `process-raw-labeled-wav.sh` script will:
 
-1. Take raw samples in `crying/` and `silence/` folders
+1. Take raw samples in `crying/` and `white_noise/` folders
 1. Batch them up and splice them evenly into 5-second segments
 1. Amplify 45dB, downsample to 22050
 1. Store in `data/<LABEL>` directory.
@@ -45,13 +45,13 @@ Seems like the WAV file partitions might be too short? Need exactly `SAMPLE_RATE
 ## Training
 
 ```
-python app/train.py --data_url= --data_dir=/Users/andrewhao/workspace/babblefish/data --wanted_words=silence,crying --sample_rate=48000 --clip_duration_ms=5000 --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-1300 --how_many_training_steps=1400,300
+python app/train.py --data_url= --data_dir=/Users/andrewhao/workspace/babblefish/data --wanted_words=white_noise,crying --sample_rate=48000 --clip_duration_ms=5000 --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-1300 --how_many_training_steps=1400,300
 ```
 
 ### Freeze
 
 ```
-python app/freeze.py --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-1700 --output_file=./graph.pb --clip_duration_ms=5000 --sample_rate=48000 --how_many_training_steps=1400,300 --wanted_words=silence,crying --data_dir=/Users/andrewhao/workspace/babblefish/data
+python app/freeze.py --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-1700 --output_file=./graph.pb --clip_duration_ms=5000 --sample_rate=48000 --how_many_training_steps=1400,300 --wanted_words=white_noise,crying --data_dir=/Users/andrewhao/workspace/babblefish/data
 ```
 
 ### Label
