@@ -176,10 +176,10 @@ def create_keras_single_fc_model(fingerprint_input, model_settings, is_training)
   print('fingerprint_size = {}'.format(fingerprint_size))
   print('label_count = {}'.format(label_count))
 
-  logits = tf.layers.Dense(
+  logits = tf.keras.layers.Dense(
     64,
     input_dim=fingerprint_size,
-    kernel_initializer=tf.keras.initializers.truncated_normal(mean=0.0, stddev=0.001, seed=SEED)
+    kernel_initializer=tf.keras.initializers.TruncatedNormal(mean=0.0, stddev=0.001, seed=SEED)
   )(fingerprint_input)
 
   # weights = tf.compat.v1.get_variable(
@@ -700,6 +700,63 @@ def create_low_latency_svdf_model(fingerprint_input, model_settings,
       initializer=tf.compat.v1.zeros_initializer,
       shape=[label_count])
   final_fc = tf.matmul(final_fc_input, final_fc_weights) + final_fc_bias
+  if is_training:
+    return final_fc, dropout_prob
+  else:
+    return final_fc
+
+def create_keras_tiny_conv_model(fingerprint_input, model_settings, is_training):
+  if is_training:
+    dropout_prob = tf.compat.v1.placeholder(tf.float32, name='dropout_prob')
+  input_frequency_size = model_settings['fingerprint_width']
+  input_time_size = model_settings['spectrogram_length']
+  fingerprint_4d = tf.reshape(fingerprint_input,
+                              [-1, input_time_size, input_frequency_size, 1])
+  first_filter_width = 8
+  first_filter_height = 10
+  first_filter_count = 8
+  one = tf.keras.layers.Conv2D(
+    strides=(2,2)
+    # input_shape=(input_time_size, input_frequency_size)
+  )(fingerprint_input)
+  first_weights = tf.compat.v1.get_variable(
+      name='first_weights',
+      initializer=tf.compat.v1.truncated_normal_initializer(stddev=0.01),
+      shape=[first_filter_height, first_filter_width, 1, first_filter_count])
+  first_bias = tf.compat.v1.get_variable(
+      name='first_bias',
+      initializer=tf.compat.v1.zeros_initializer,
+      shape=[first_filter_count])
+  first_conv_stride_x = 2
+  first_conv_stride_y = 2
+  first_conv = tf.nn.conv2d(
+      input=fingerprint_4d, filters=first_weights,
+      strides=[1, first_conv_stride_y, first_conv_stride_x, 1],
+      padding='SAME') + first_bias
+  first_relu = tf.nn.relu(first_conv)
+  if is_training:
+    first_dropout = tf.nn.dropout(first_relu, 1 - (dropout_prob))
+  else:
+    first_dropout = first_relu
+  first_dropout_shape = first_dropout.get_shape()
+  first_dropout_output_width = first_dropout_shape[2]
+  first_dropout_output_height = first_dropout_shape[1]
+  first_dropout_element_count = int(
+      first_dropout_output_width * first_dropout_output_height *
+      first_filter_count)
+  flattened_first_dropout = tf.reshape(first_dropout,
+                                       [-1, first_dropout_element_count])
+  label_count = model_settings['label_count']
+  final_fc_weights = tf.compat.v1.get_variable(
+      name='final_fc_weights',
+      initializer=tf.compat.v1.truncated_normal_initializer(stddev=0.01),
+      shape=[first_dropout_element_count, label_count])
+  final_fc_bias = tf.compat.v1.get_variable(
+      name='final_fc_bias',
+      initializer=tf.compat.v1.zeros_initializer,
+      shape=[label_count])
+  final_fc = (
+      tf.matmul(flattened_first_dropout, final_fc_weights) + final_fc_bias)
   if is_training:
     return final_fc, dropout_prob
   else:
