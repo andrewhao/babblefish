@@ -2,3 +2,4 @@
 tmp
 training
 venv
+__pycache__
