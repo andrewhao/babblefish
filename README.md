@@ -59,3 +59,10 @@ python app/freeze.py --start_checkpoint=/tmp/speech_commands_train/conv.ckpt-170
 ```
 python app/label_wav.py --graph=./graph.pb --labels=./conv_labels.txt --wav=data/crying/crying00021.wav
 ```
+
+
+## MP3<>WAV utilities
+
+MP3 -> WAV
+
+`ffmpeg -i crying/2_years/2019-09-11\ 04:53:03.wav.mp3 -acodec pcm_s16le -r 22050 test.wav`
