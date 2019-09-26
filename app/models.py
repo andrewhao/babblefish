@@ -23,6 +23,8 @@ import math
 
 import tensorflow as tf
 
+SEED=42
+
 
 def _next_power_of_two(x):
   """Calculates the smallest enclosing power of two for an input.
@@ -129,6 +131,9 @@ def create_model(fingerprint_input, model_settings, model_architecture,
   if model_architecture == 'single_fc':
     return create_single_fc_model(fingerprint_input, model_settings,
                                   is_training)
+  if model_architecture == 'keras_single_fc':
+    return create_keras_single_fc_model(fingerprint_input, model_settings,
+                                  is_training)
   elif model_architecture == 'conv':
     return create_conv_model(fingerprint_input, model_settings, is_training)
   elif model_architecture == 'low_latency_conv':
@@ -160,6 +165,35 @@ def load_variables_from_checkpoint(sess, start_checkpoint):
   saver = tf.compat.v1.train.Saver(tf.compat.v1.global_variables())
   saver.restore(sess, start_checkpoint)
 
+def create_keras_single_fc_model(fingerprint_input, model_settings, is_training):
+  if is_training:
+    dropout_prob = tf.compat.v1.placeholder(tf.float32, name='dropout_prob')
+
+
+  fingerprint_size = model_settings['fingerprint_size']
+  label_count = model_settings['label_count']
+
+  print('fingerprint_size = {}'.format(fingerprint_size))
+  print('label_count = {}'.format(label_count))
+
+  logits = tf.layers.Dense(
+    64,
+    input_dim=fingerprint_size,
+    kernel_initializer=tf.keras.initializers.truncated_normal(mean=0.0, stddev=0.001, seed=SEED)
+  )(fingerprint_input)
+
+  # weights = tf.compat.v1.get_variable(
+  #     name='weights',
+  #     initializer=tf.compat.v1.truncated_normal_initializer(stddev=0.001),
+  #     shape=[fingerprint_size, label_count])
+  # bias = tf.compat.v1.get_variable(name='bias',
+  #                                  initializer=tf.compat.v1.zeros_initializer,
+  #                                  shape=[label_count])
+  # logits = tf.matmul(fingerprint_input, weights) + bias
+  if is_training:
+    return logits, dropout_prob
+  else:
+    return logits
 
 def create_single_fc_model(fingerprint_input, model_settings, is_training):
   """Builds a model with a single hidden fully-connected layer.
