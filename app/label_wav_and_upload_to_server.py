@@ -57,7 +57,7 @@ def load_labels(filename):
   return [line.rstrip() for line in tf.io.gfile.GFile(filename)]
 
 
-def run_graph(wav_data, labels, input_layer_name, output_layer_name,
+def run_graph(wav, wav_data, labels, input_layer_name, output_layer_name,
               num_top_predictions):
   """Runs the audio data through the graph and prints predictions."""
   with tf.compat.v1.Session() as sess:
@@ -115,7 +115,7 @@ def label_wav(wav, labels, graph, input_name, output_name, how_many_labels):
   with open(wav, 'rb') as wav_file:
     wav_data = wav_file.read()
 
-  run_graph(wav_data, labels_list, input_name, output_name, how_many_labels)
+  run_graph(wav, wav_data, labels_list, input_name, output_name, how_many_labels)
 
 
 def main(_):
