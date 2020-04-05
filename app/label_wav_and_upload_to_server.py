@@ -37,6 +37,7 @@ import sys
 import requests
 import re
 import os
+import datetime
 
 import tensorflow as tf
 
@@ -74,8 +75,7 @@ def run_graph(wav, wav_data, labels, input_layer_name, output_layer_name,
     guessed_node_id = top_k[0]
     human_string = labels[guessed_node_id]
     score = predictions[guessed_node_id]
-    datetime = re.sub(".wav", "", wav.split('/')[-1])
-    upload_to_server(human_string, score, datetime)
+    upload_to_server(human_string, score)
 
     for node_id in top_k:
       human_string = labels[node_id]
@@ -84,7 +84,7 @@ def run_graph(wav, wav_data, labels, input_layer_name, output_layer_name,
 
     return 0
 
-def upload_to_server(human_string, score, received_at):
+def upload_to_server(human_string, score, received_at=datetime.datetime.utcnow().isoformat()):
   is_crying = 1 if human_string == "crying" else 0
   data = {'is_crying': is_crying,
           'human_string': human_string,
