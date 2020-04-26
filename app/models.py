@@ -176,11 +176,12 @@ def create_keras_single_fc_model(fingerprint_input, model_settings, is_training)
   print('fingerprint_size = {}'.format(fingerprint_size))
   print('label_count = {}'.format(label_count))
 
+  input_tensor = tf.keras.layers.Input(tensor=fingerprint_input)
   logits = tf.keras.layers.Dense(
     64,
     input_dim=fingerprint_size,
     kernel_initializer=tf.keras.initializers.TruncatedNormal(mean=0.0, stddev=0.001, seed=SEED)
-  )(fingerprint_input)
+  )(input_tensor)
 
   # weights = tf.compat.v1.get_variable(
   #     name='weights',
